@@ -2,6 +2,10 @@
 
 An interactive, animated web application to help understand Kubernetes pods and containers architecture.
 
+## 🚀 Live Demo
+
+**Try it now:** [https://vinodvaswani315.github.io/Kubernetes-Pods-Containers-Visualizer/](https://vinodvaswani315.github.io/Kubernetes-Pods-Containers-Visualizer/)
+
 ## Features
 
 ### 🎨 Visual Elements
@@ -33,6 +37,10 @@ An interactive, animated web application to help understand Kubernetes pods and 
 
 ## How to Run
 
+### Option 1: Live Demo (Recommended)
+**Visit the live demo:** [https://vinodvaswani315.github.io/Kubernetes-Pods-Containers-Visualizer/](https://vinodvaswani315.github.io/Kubernetes-Pods-Containers-Visualizer/)
+
+### Option 2: Local Development
 1. **Open in Browser**:
    ```bash
    # Simply open index.html in your web browser
