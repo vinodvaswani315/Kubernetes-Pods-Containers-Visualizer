@@ -80,8 +80,7 @@ body {
 }
 
 .sidebar-section {
-    margin-bottom: 25px;
-    padding-bottom: 20px;
+    margin-bottom: 15px;
     border-bottom: 1px solid var(--border);
 }
 
@@ -91,8 +90,56 @@ body {
 
 .sidebar-section h2 {
     font-size: 1.1em;
-    margin-bottom: 15px;
+    margin: 0;
     color: var(--text-primary);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 10px 0;
+    user-select: none;
+    transition: background 0.2s ease;
+    border-radius: 4px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.section-header:hover {
+    background: var(--bg-light);
+}
+
+.collapse-icon {
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    transition: transform 0.3s ease;
+    font-weight: bold;
+}
+
+.sidebar-section.collapsed .collapse-icon {
+    transform: rotate(-90deg);
+}
+
+.section-content {
+    max-height: 2000px;
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+    opacity: 1;
+    padding-top: 10px;
+}
+
+.sidebar-section.collapsed .section-content {
+    max-height: 0;
+    opacity: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin: 0;
+}
+
+.sidebar-section.collapsed {
+    padding-bottom: 10px;
 }
 
 .main-content {

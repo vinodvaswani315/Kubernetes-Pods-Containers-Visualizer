@@ -13,6 +13,7 @@ let currentRequestRate = 0;
 let requestsLastSecond = 0;
 let lastRequestTime = Date.now();
 let deploymentGeneration = 1;
+let loadBalancerRoundRobinIndex = 0; // For round-robin load balancing
 
 // Pod resource configuration
 let podResourceConfig = {
@@ -54,11 +55,22 @@ const CONTAINER_NAMES = [
     'monitoring', 'logging', 'proxy', 'auth-service'
 ];
 
+// Collapsible sections
+function toggleSection(header) {
+    const section = header.closest('.sidebar-section');
+    section.classList.toggle('collapsed');
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     setupEventListeners();
     setupEventLogToggle();
     updateLoadBalancerIndicator();
+    
+    // Set default collapsed sections (optional - you can customize which sections start collapsed)
+    // const autoScaleSection = document.querySelector('.sidebar-section:nth-child(3)');
+    // if (autoScaleSection) autoScaleSection.classList.add('collapsed');
+    
     addLog('System', 'Kubernetes cluster initialized and ready');
     addLog('Tip', 'Configure auto-scale thresholds and start creating pods!');
     
@@ -157,7 +169,12 @@ function setupEventListeners() {
     document.getElementById('enableLoadBalancer').addEventListener('change', (e) => {
         features.loadBalancer = e.target.checked;
         updateLoadBalancerIndicator();
-        addLog('Feature', `Load balancer ${features.loadBalancer ? 'enabled' : 'disabled'}`);
+        loadBalancerRoundRobinIndex = 0; // Reset round-robin index
+        const status = features.loadBalancer ? 'enabled' : 'disabled';
+        const impact = features.loadBalancer 
+            ? 'Requests will be evenly distributed across all containers' 
+            : 'Requests will be randomly distributed (may cause uneven load)';
+        addLog('Feature', `Load balancer ${status}. ${impact}`);
     });
     
     document.getElementById('enableSelfHealing').addEventListener('change', (e) => {
@@ -838,14 +855,24 @@ function updateTraffic() {
     const intervalMs = 1000 / Math.max(currentRequestRate / 10, 1);
     
     trafficInterval = setInterval(() => {
-        const allContainers = document.querySelectorAll('.container-box');
+        const allContainers = Array.from(document.querySelectorAll('.container-box'));
         if (allContainers.length === 0) return;
         
         // Distribute requests to containers
         const requestsThisTick = Math.ceil(currentRequestRate / 10);
         
         for (let i = 0; i < requestsThisTick; i++) {
-            const container = allContainers[Math.floor(Math.random() * allContainers.length)];
+            let container;
+            
+            if (features.loadBalancer) {
+                // Load balancer ENABLED: Use round-robin for even distribution
+                container = allContainers[loadBalancerRoundRobinIndex % allContainers.length];
+                loadBalancerRoundRobinIndex++;
+            } else {
+                // Load balancer DISABLED: Random distribution (may overload some containers)
+                container = allContainers[Math.floor(Math.random() * allContainers.length)];
+            }
+            
             if (!container) continue;
             
             // Simulate request
