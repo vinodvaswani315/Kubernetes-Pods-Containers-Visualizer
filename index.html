@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kubernetes Pods & Containers Visualizer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="main-header">
+        <h1>🎯 Kubernetes Pods & Containers Visualizer</h1>
+        <p class="subtitle">Interactive animated guide to understanding K8s architecture</p>
+    </header>
+
+    <div class="app-container">
+        <!-- Left Sidebar - Controls -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h2>📦 Pod Configuration</h2>
+                <div class="control-group">
+                    <label for="containerCount">Containers per Pod:</label>
+                    <input type="number" id="containerCount" min="1" max="5" value="1">
+                </div>
+                
+                <div class="control-group">
+                    <label for="podMemory">Memory Limit (per pod):</label>
+                    <div class="slider-container">
+                        <input type="range" id="podMemory" min="128" max="4096" step="128" value="512">
+                        <span id="podMemoryValue">512 MB</span>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label for="podCpu">CPU Limit (per pod):</label>
+                    <div class="slider-container">
+                        <input type="range" id="podCpu" min="100" max="4000" step="100" value="500">
+                        <span id="podCpuValue">0.5 cores</span>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label for="deployStrategy">Deployment Strategy:</label>
+                    <select id="deployStrategy" class="select-input">
+                        <option value="rolling">Rolling Update</option>
+                        <option value="recreate">Recreate</option>
+                        <option value="bluegreen">Blue-Green</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label>
+                        <input type="checkbox" id="enableHealthChecks" checked>
+                        Health Checks (Liveness/Readiness)
+                    </label>
+                </div>
+                
+                <div class="button-row">
+                    <button id="addPodBtn" class="btn btn-primary btn-compact">
+                        ➕ Create
+                    </button>
+                    <button id="clearBtn" class="btn btn-danger btn-compact">
+                        🗑️ Clear
+                    </button>
+                </div>
+                
+                <button id="rollingUpdateBtn" class="btn btn-secondary btn-full btn-compact">
+                    🔄 Rolling Update
+                </button>
+            </div>
+
+            <div class="sidebar-section">
+                <h2>🌐 Traffic Simulator</h2>
+                
+                <div class="traffic-control-group">
+                    <label for="trafficLevel">Traffic Level:</label>
+                    <div class="slider-container">
+                        <input type="range" id="trafficLevel" min="0" max="100" value="0">
+                        <span id="trafficValue">0%</span>
+                    </div>
+                </div>
+                
+                <div class="traffic-control-group">
+                    <label for="requestRate">Requests/Second:</label>
+                    <div class="slider-container">
+                        <input type="range" id="requestRate" min="0" max="1000" step="50" value="0">
+                        <span id="requestRateValue">0 req/s</span>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label>
+                        <input type="checkbox" id="enableLoadBalancer" checked>
+                        Load Balancer
+                    </label>
+                </div>
+                
+                <div class="traffic-presets">
+                    <button id="lowTrafficBtn" class="btn btn-traffic btn-compact">Low</button>
+                    <button id="mediumTrafficBtn" class="btn btn-traffic btn-compact">Med</button>
+                    <button id="highTrafficBtn" class="btn btn-traffic btn-compact">High</button>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h2>⚙️ Auto-Scale Settings</h2>
+                
+                <div class="traffic-control-group">
+                    <label for="cpuThreshold">CPU Threshold (Scale Up):</label>
+                    <div class="slider-container">
+                        <input type="range" id="cpuThreshold" min="10" max="100" step="5" value="70">
+                        <span id="cpuThresholdValue">70%</span>
+                    </div>
+                </div>
+                
+                <div class="traffic-control-group">
+                    <label for="memoryThreshold">Memory Threshold (Scale Up):</label>
+                    <div class="slider-container">
+                        <input type="range" id="memoryThreshold" min="10" max="100" step="5" value="75">
+                        <span id="memoryThresholdValue">75%</span>
+                    </div>
+                </div>
+                
+                <div class="traffic-control-group">
+                    <label for="requestThreshold">Request/s Threshold (Scale Up):</label>
+                    <div class="slider-container">
+                        <input type="range" id="requestThreshold" min="50" max="500" step="25" value="200">
+                        <span id="requestThresholdValue">200</span>
+                    </div>
+                </div>
+                
+                <div class="traffic-control-group">
+                    <label for="scaleDownThreshold">Scale Down Below:</label>
+                    <div class="slider-container">
+                        <input type="range" id="scaleDownThreshold" min="10" max="50" step="5" value="30">
+                        <span id="scaleDownThresholdValue">30%</span>
+                    </div>
+                </div>
+                
+                <div class="traffic-control-group">
+                    <label for="minPods">Min Pods:</label>
+                    <div class="slider-container">
+                        <input type="range" id="minPods" min="1" max="5" value="2">
+                        <span id="minPodsValue">2</span>
+                    </div>
+                </div>
+                
+                <div class="traffic-control-group">
+                    <label for="maxPods">Max Pods:</label>
+                    <div class="slider-container">
+                        <input type="range" id="maxPods" min="5" max="20" value="10">
+                        <span id="maxPodsValue">10</span>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label>
+                        <input type="checkbox" id="enableVerticalScaling">
+                        Vertical Pod Autoscaler (VPA)
+                    </label>
+                </div>
+                
+                <button id="autoScaleBtn" class="btn btn-success btn-full btn-compact">
+                    ⚡ Start Auto-Scale (HPA)
+                </button>
+            </div>
+            
+            <div class="sidebar-section">
+                <h2>🛡️ Reliability & Chaos</h2>
+                
+                <div class="control-group">
+                    <label for="failureRate">Pod Failure Rate:</label>
+                    <div class="slider-container">
+                        <input type="range" id="failureRate" min="0" max="50" step="5" value="0">
+                        <span id="failureRateValue">0%</span>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label>
+                        <input type="checkbox" id="enableSelfHealing" checked>
+                        Self-Healing (Auto-Restart Failed Pods)
+                    </label>
+                </div>
+                
+                <div class="button-row">
+                    <button id="chaosBtn" class="btn btn-warning btn-compact">
+                        💥 Chaos
+                    </button>
+                    <button id="restartAllBtn" class="btn btn-secondary btn-compact">
+                        🔄 Restart
+                    </button>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h2>📊 Cluster Metrics</h2>
+                <div class="metrics-list">
+                    <div class="metric-item">
+                        <span class="metric-label">Total Requests:</span>
+                        <span class="metric-value" id="totalRequests">0</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Active:</span>
+                        <span class="metric-value" id="activeRequests">0</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Req/s:</span>
+                        <span class="metric-value" id="currentReqRate">0</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Avg Response:</span>
+                        <span class="metric-value" id="avgResponseTime">0ms</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Error Rate:</span>
+                        <span class="metric-value" id="errorRate">0%</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Pods:</span>
+                        <span class="metric-value" id="podCount">0</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Containers:</span>
+                        <span class="metric-value" id="containerCountDisplay">0</span>
+                    </div>
+                    <div class="metric-item metric-highlight">
+                        <span class="metric-label">Avg CPU:</span>
+                        <span class="metric-value" id="avgCPU">0%</span>
+                    </div>
+                    <div class="metric-item metric-highlight">
+                        <span class="metric-label">Avg Memory:</span>
+                        <span class="metric-value" id="avgMemory">0%</span>
+                    </div>
+                    <div class="metric-item metric-highlight">
+                        <span class="metric-label">Total Memory:</span>
+                        <span class="metric-value" id="totalMemoryAllocated">0 MB</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h2>🎨 Status Legend</h2>
+                <div class="legend-items">
+                    <div class="legend-item">
+                        <span class="status-badge pending"></span>
+                        <span>Pending</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="status-badge running"></span>
+                        <span>Running</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="status-badge succeeded"></span>
+                        <span>Succeeded</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="status-badge failed"></span>
+                        <span>Failed</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <h2>⚡ Quick Actions</h2>
+                <div class="button-row">
+                    <button id="exportBtn" class="btn btn-info btn-compact" title="Export Configuration">
+                        💾 Save
+                    </button>
+                    <button id="importBtn" class="btn btn-info btn-compact" title="Import Configuration">
+                        📂 Load
+                    </button>
+                </div>
+                <button id="resetBtn" class="btn btn-secondary btn-full btn-compact">
+                    ↺ Reset All Settings
+                </button>
+            </div>
+        </aside>
+
+        <!-- Right Main Content - Visualization -->
+        <main class="main-content">
+            <div class="cluster-view">
+                <div class="cluster-header">
+                    <h2>🌐 Kubernetes Cluster</h2>
+                </div>
+                
+                <div class="node-container">
+                    <div class="node" id="node1">
+                        <div class="node-header">
+                            <span class="node-icon">🖥️</span>
+                            <span class="node-name">Worker Node 1</span>
+                        </div>
+                        <div class="pods-area" data-node="1"></div>
+                    </div>
+                    
+                    <div class="node" id="node2">
+                        <div class="node-header">
+                            <span class="node-icon">🖥️</span>
+                            <span class="node-name">Worker Node 2</span>
+                        </div>
+                        <div class="pods-area" data-node="2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="event-log">
+                <div class="event-log-header">
+                    <h3>📋 Event Log</h3>
+                    <button id="toggleLogBtn" class="btn-log-toggle" title="Expand/Collapse">
+                        ▲
+                    </button>
+                </div>
+                <div id="logContent" class="log-content"></div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
