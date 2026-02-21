@@ -37,26 +37,8 @@ An interactive, animated web application to help understand Kubernetes pods and 
 
 ## How to Run
 
-### Option 1: Live Demo (Recommended)
+### Option 1: Live Demo
 **Visit the live demo:** [https://vinodvaswani315.github.io/Kubernetes-Pods-Containers-Visualizer/](https://vinodvaswani315.github.io/Kubernetes-Pods-Containers-Visualizer/)
-
-### Option 2: Local Development
-1. **Open in Browser**:
-   ```bash
-   # Simply open index.html in your web browser
-   # Or use a local server:
-   python -m http.server 8000
-   # Then visit: http://localhost:8000
-   ```
-
-2. **Explore the Interface**:
-   - Select number of containers (1-5) and create pods
-   - Adjust traffic sliders to simulate load
-   - Watch real-time metrics update
-   - See containers handle incoming requests with visual indicators
-   - Use traffic presets for quick scenarios
-   - Enable auto-scale and watch pods adjust to traffic
-   - Monitor the event log for all activities
 
 ## Understanding Kubernetes Concepts
 
