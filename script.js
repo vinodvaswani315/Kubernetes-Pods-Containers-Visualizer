@@ -157,6 +157,10 @@ function closeWalkthrough() {
     }
     document.querySelectorAll('.walkthrough-target-highlight').forEach(el => el.classList.remove('walkthrough-target-highlight'));
     walkthroughIndex = 0;
+    // Scroll page and sidebar back to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar) sidebar.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // Collapsible sections
