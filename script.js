@@ -55,6 +55,110 @@ const CONTAINER_NAMES = [
     'monitoring', 'logging', 'proxy', 'auth-service'
 ];
 
+// Walkthrough steps (targetId optional for welcome/end)
+const WALKTHROUGH_STEPS = [
+    { targetId: null, title: 'Welcome to the K8s Visualizer', body: 'This short walkthrough explains all controls and options. Use Next to go through each section, or Skip to start using the app right away.' },
+    { targetId: 'wt-pod-config', title: '📦 Pod Configuration', body: 'Set how many containers each pod has (1–5), memory limit (MB), and CPU limit (cores). Choose deployment strategy: Rolling Update (zero downtime), Recreate (replace all), or Blue-Green. Enable Health Checks to see liveness/readiness probes. Use Create to add pods to the cluster and Clear to remove all. Rolling Update simulates updating all pods with a new version.' },
+    { targetId: 'wt-traffic', title: '🌐 Traffic Simulator', body: 'Control simulated load: Traffic Level (%) and Requests per second. Enable Load Balancer to distribute requests across pods (round-robin). Use Low, Med, or High presets to quickly set traffic levels.' },
+    { targetId: 'wt-autoscale', title: '⚙️ Auto-Scale Settings', body: 'Configure the Horizontal Pod Autoscaler (HPA): scale up when CPU, Memory, or Request/s exceed the thresholds; scale down when usage drops below the scale-down value. Set Min and Max pod count. Enable Vertical Pod Autoscaler (VPA) for vertical scaling. Start Auto-Scale (HPA) to run the autoscaler with these settings.' },
+    { targetId: 'wt-reliability', title: '🛡️ Reliability & Chaos', body: 'Pod Failure Rate injects random failures to test resilience. Self-Healing automatically restarts failed pods (like Kubernetes). Chaos triggers random failures; Restart brings all pods back to Running.' },
+    { targetId: 'wt-metrics', title: '📊 Cluster Metrics', body: 'Live metrics: total and active requests, requests/sec, average response time, error rate, pod and container counts, average CPU and memory usage, and total memory allocated across the cluster.' },
+    { targetId: 'wt-legend', title: '🎨 Status Legend', body: 'Pod states: Pending (scheduling), Running (active), Succeeded (completed), Failed (error). The colors match Kubernetes pod phase indicators.' },
+    { targetId: 'wt-quick-actions', title: '⚡ Quick Actions', body: 'Save exports your current configuration (pods, settings) to a JSON file. Load imports a previously saved configuration. Reset All Settings clears pods and restores default control values.' },
+    { targetId: 'wt-event-log', title: '📋 Event Log', body: 'The event log shows system events, pod creation/deletion, traffic, scaling, and chaos events. Click the header or the arrow to expand or collapse the log.' },
+    { targetId: null, title: "You're all set!", body: 'Explore the visualizer: create pods, increase traffic, enable auto-scale, or trigger chaos to see how a Kubernetes-style system behaves. You can reopen this walkthrough by refreshing the page (unless you chose "Don\'t show again").' }
+];
+
+let walkthroughIndex = 0;
+
+function initWalkthrough() {
+    if (localStorage.getItem('k8-walkthrough-skip') === '1') return;
+    const backdrop = document.getElementById('walkthrough-backdrop');
+    const nextBtn = document.getElementById('walkthrough-next');
+    const prevBtn = document.getElementById('walkthrough-prev');
+    const skipBtn = document.getElementById('walkthrough-skip');
+    const dontShow = document.getElementById('walkthrough-dont-show');
+    if (!backdrop) return;
+
+    nextBtn.addEventListener('click', () => {
+        if (walkthroughIndex >= WALKTHROUGH_STEPS.length - 1) {
+            if (dontShow.checked) localStorage.setItem('k8-walkthrough-skip', '1');
+            closeWalkthrough();
+        } else {
+            walkthroughIndex++;
+            showWalkthroughStep();
+        }
+    });
+    prevBtn.addEventListener('click', () => {
+        if (walkthroughIndex > 0) {
+            walkthroughIndex--;
+            showWalkthroughStep();
+        }
+    });
+    skipBtn.addEventListener('click', () => {
+        if (dontShow.checked) localStorage.setItem('k8-walkthrough-skip', '1');
+        closeWalkthrough();
+    });
+
+    walkthroughIndex = 0;
+    backdrop.classList.add('visible');
+    backdrop.setAttribute('aria-hidden', 'false');
+    showWalkthroughStep();
+}
+
+function showWalkthroughStep() {
+    const step = WALKTHROUGH_STEPS[walkthroughIndex];
+    const backdrop = document.getElementById('walkthrough-backdrop');
+    const titleEl = document.getElementById('walkthrough-title');
+    const bodyEl = document.getElementById('walkthrough-body');
+    const currentEl = document.getElementById('walkthrough-current');
+    const totalEl = document.getElementById('walkthrough-total');
+    const nextBtn = document.getElementById('walkthrough-next');
+    const prevBtn = document.getElementById('walkthrough-prev');
+    const dotsEl = document.getElementById('walkthrough-dots');
+
+    if (prevBtn) {
+        const onFirst = walkthroughIndex === 0;
+        prevBtn.disabled = onFirst;
+        prevBtn.style.display = onFirst ? 'none' : '';
+    }
+
+    document.querySelectorAll('.walkthrough-target-highlight').forEach(el => el.classList.remove('walkthrough-target-highlight'));
+    if (step.targetId) {
+        const target = document.getElementById(step.targetId);
+        if (target) {
+            target.classList.add('walkthrough-target-highlight');
+            target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            const section = target.closest('.sidebar-section');
+            if (section && section.classList.contains('collapsed')) section.classList.remove('collapsed');
+        }
+    }
+
+    titleEl.textContent = step.title;
+    bodyEl.textContent = step.body;
+    currentEl.textContent = walkthroughIndex + 1;
+    totalEl.textContent = WALKTHROUGH_STEPS.length;
+    nextBtn.textContent = walkthroughIndex >= WALKTHROUGH_STEPS.length - 1 ? 'Finish' : 'Next';
+
+    dotsEl.innerHTML = '';
+    WALKTHROUGH_STEPS.forEach((_, i) => {
+        const dot = document.createElement('span');
+        dot.className = 'walkthrough-dot' + (i < walkthroughIndex ? ' done' : i === walkthroughIndex ? ' active' : '');
+        dot.setAttribute('aria-hidden', 'true');
+        dotsEl.appendChild(dot);
+    });
+}
+
+function closeWalkthrough() {
+    const backdrop = document.getElementById('walkthrough-backdrop');
+    if (backdrop) {
+        backdrop.classList.remove('visible');
+        backdrop.setAttribute('aria-hidden', 'true');
+    }
+    document.querySelectorAll('.walkthrough-target-highlight').forEach(el => el.classList.remove('walkthrough-target-highlight'));
+    walkthroughIndex = 0;
+}
+
 // Collapsible sections
 function toggleSection(header) {
     const section = header.closest('.sidebar-section');
@@ -77,6 +181,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Create initial demo pods
     setTimeout(() => createPod(1, 1), 500);
     setTimeout(() => createPod(2, 2), 1000);
+
+    // Start walkthrough after a short delay (skip if user chose "Don't show again")
+    setTimeout(initWalkthrough, 600);
 });
 
 function setupEventLogToggle() {

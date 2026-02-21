@@ -15,7 +15,7 @@
     <div class="app-container">
         <!-- Left Sidebar - Controls -->
         <aside class="sidebar">
-            <div class="sidebar-section collapsible">
+            <div class="sidebar-section collapsible" id="wt-pod-config">
                 <div class="section-header" onclick="toggleSection(this)">
                     <h2>📦 Pod Configuration</h2>
                     <span class="collapse-icon">▼</span>
@@ -73,7 +73,7 @@
                 </div>
             </div>
 
-            <div class="sidebar-section collapsible">
+            <div class="sidebar-section collapsible" id="wt-traffic">
                 <div class="section-header" onclick="toggleSection(this)">
                     <h2>🌐 Traffic Simulator</h2>
                     <span class="collapse-icon">▼</span>
@@ -111,7 +111,7 @@
                 </div>
             </div>
 
-            <div class="sidebar-section collapsible">
+            <div class="sidebar-section collapsible" id="wt-autoscale">
                 <div class="section-header" onclick="toggleSection(this)">
                     <h2>⚙️ Auto-Scale Settings</h2>
                     <span class="collapse-icon">▼</span>
@@ -179,7 +179,7 @@
                 </div>
             </div>
             
-            <div class="sidebar-section collapsible">
+            <div class="sidebar-section collapsible" id="wt-reliability">
                 <div class="section-header" onclick="toggleSection(this)">
                     <h2>🛡️ Reliability & Chaos</h2>
                     <span class="collapse-icon">▼</span>
@@ -212,7 +212,7 @@
                 </div>
             </div>
 
-            <div class="sidebar-section collapsible">
+            <div class="sidebar-section collapsible" id="wt-metrics">
                 <div class="section-header" onclick="toggleSection(this)">
                     <h2>📊 Cluster Metrics</h2>
                     <span class="collapse-icon">▼</span>
@@ -263,7 +263,7 @@
                 </div>
             </div>
 
-            <div class="sidebar-section collapsible">
+            <div class="sidebar-section collapsible" id="wt-legend">
                 <div class="section-header" onclick="toggleSection(this)">
                     <h2>🎨 Status Legend</h2>
                     <span class="collapse-icon">▼</span>
@@ -290,7 +290,7 @@
                 </div>
             </div>
             
-            <div class="sidebar-section collapsible">
+            <div class="sidebar-section collapsible" id="wt-quick-actions">
                 <div class="section-header" onclick="toggleSection(this)">
                     <h2>⚡ Quick Actions</h2>
                     <span class="collapse-icon">▼</span>
@@ -313,7 +313,7 @@
 
         <!-- Right Main Content - Visualization -->
         <main class="main-content">
-            <div class="cluster-view">
+            <div class="cluster-view" id="wt-cluster">
                 <div class="cluster-header">
                     <h2>🌐 Kubernetes Cluster</h2>
                 </div>
@@ -337,7 +337,7 @@
                 </div>
             </div>
 
-            <div class="event-log">
+            <div class="event-log" id="wt-event-log">
                 <div class="event-log-header">
                     <h3>📋 Event Log</h3>
                     <button id="toggleLogBtn" class="btn-log-toggle" title="Expand/Collapse">
@@ -347,6 +347,29 @@
                 <div id="logContent" class="log-content"></div>
             </div>
         </main>
+    </div>
+
+    <!-- Walkthrough overlay (shown on first load) -->
+    <div id="walkthrough-backdrop" class="walkthrough-backdrop" aria-hidden="true">
+        <div class="walkthrough-card">
+            <div class="walkthrough-progress">
+                <span id="walkthrough-step-label">Step <span id="walkthrough-current">1</span> of <span id="walkthrough-total">10</span></span>
+                <div class="walkthrough-dots" id="walkthrough-dots"></div>
+            </div>
+            <h3 id="walkthrough-title" class="walkthrough-title"></h3>
+            <p id="walkthrough-body" class="walkthrough-body"></p>
+            <div class="walkthrough-actions">
+                <label class="walkthrough-skip-label">
+                    <input type="checkbox" id="walkthrough-dont-show" />
+                    Don't show again
+                </label>
+                <div class="walkthrough-buttons">
+                    <button type="button" id="walkthrough-skip" class="btn btn-secondary walkthrough-btn">Skip</button>
+                    <button type="button" id="walkthrough-prev" class="btn btn-secondary walkthrough-btn">Previous</button>
+                    <button type="button" id="walkthrough-next" class="btn btn-primary walkthrough-btn">Next</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
