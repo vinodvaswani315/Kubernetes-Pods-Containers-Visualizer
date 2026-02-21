@@ -189,6 +189,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // Start walkthrough after a short delay (skip if user chose "Don't show again")
     setTimeout(initWalkthrough, 600);
 });
+    
+    // Auto-expand on first log entry after a delay
+    setTimeout(() => {
+        if (document.querySelectorAll('.log-entry').length > 0) {
+            eventLog.classList.add('expanded');
+            setTimeout(() => {
+                eventLog.classList.remove('expanded');
+            }, 3000);
+        }
+    }, 2000);
 
 function setupEventLogToggle() {
     const eventLog = document.querySelector('.event-log');
@@ -855,10 +865,11 @@ function toggleAutoScale() {
     } else {
         const allPods = document.querySelectorAll('.pod');
         if (allPods.length < autoScaleConfig.minPods) {
+            const numContainers = parseInt(document.getElementById('containerCount').value, 10) || 1;
             addLog('Auto-Scale', `Creating initial pods (min: ${autoScaleConfig.minPods})...`);
             for (let i = allPods.length; i < autoScaleConfig.minPods; i++) {
                 const node = (i % 2) + 1;
-                createPod(node, 2);
+                createPod(node, numContainers);
             }
         }
         
@@ -907,8 +918,8 @@ function performAutoScaling() {
     
     if (shouldScaleUp) {
         const node = Math.random() < 0.5 ? 1 : 2;
-        const containers = Math.floor(Math.random() * 2) + 1;
-        createPod(node, containers);
+        const numContainers = parseInt(document.getElementById('containerCount').value, 10) || 1;
+        createPod(node, numContainers);
         
         const reasons = [];
         if (avgCPU > autoScaleConfig.cpuThreshold) reasons.push(`CPU ${avgCPU.toFixed(1)}%`);
