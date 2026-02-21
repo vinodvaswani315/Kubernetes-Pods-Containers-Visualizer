@@ -205,16 +205,6 @@ function setupEventLogToggle() {
         e.stopPropagation();
         eventLog.classList.toggle('expanded');
     });
-    
-    // Auto-expand on first log entry after a delay
-    setTimeout(() => {
-        if (document.querySelectorAll('.log-entry').length > 0) {
-            eventLog.classList.add('expanded');
-            setTimeout(() => {
-                eventLog.classList.remove('expanded');
-            }, 3000);
-        }
-    }, 2000);
 }
 
 function setupEventListeners() {
